@@ -27,21 +27,24 @@ class CoinExchangeBottomSheet extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const SizedBox(height: 12),
+            const SizedBox(height: DimensionsConstants.fontSmall),
             Container(
               width: 40,
-              height: 4,
+              height: DimensionsConstants.radiusSmall,
               decoration: BoxDecoration(
                 color: Colors.grey[300],
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: DimensionsConstants.fontSmall),
             Text(
               title,
-              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: DimensionsConstants.fontLarge,
+              ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: DimensionsConstants.fontSmall),
             Flexible(
               child: RadioGroup<CoinModel>(
                 groupValue: selectedCurrency,
@@ -62,7 +65,7 @@ class CoinExchangeBottomSheet extends StatelessWidget {
 
                     return ListTile(
                       leading: CircleAvatar(
-                        radius: 16,
+                        radius: DimensionsConstants.paddingMedium,
                         child: Image.asset(currency.getImage()),
                       ),
                       title: Column(
@@ -76,7 +79,7 @@ class CoinExchangeBottomSheet extends StatelessWidget {
                             currency.getName(),
                             style: TextStyle(
                               color: ColorConstants.textSecondary,
-                              fontSize: 12,
+                              fontSize: DimensionsConstants.fontSmall,
                             ),
                           ),
                         ],

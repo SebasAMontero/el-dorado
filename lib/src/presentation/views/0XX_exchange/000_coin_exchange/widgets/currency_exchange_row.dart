@@ -51,9 +51,11 @@ class CurrencyExchangeRow extends StatelessWidget {
       alignment: Alignment.center,
       children: [
         Container(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(DimensionsConstants.paddingSmall),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(100),
+            borderRadius: BorderRadius.circular(
+              DimensionsConstants.radiusCircular,
+            ),
             border: Border.all(color: ColorConstants.primary, width: 2),
           ),
           child: Row(
@@ -69,17 +71,19 @@ class CurrencyExchangeRow extends StatelessWidget {
 
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
+                          horizontal: DimensionsConstants.paddingSmall,
                           vertical: 2,
                         ),
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(4),
+                          borderRadius: BorderRadius.circular(
+                            DimensionsConstants.radiusSmall,
+                          ),
                         ),
                         child: Text(
                           StringConstants.exchangeHave,
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: DimensionsConstants.fontSmall,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -100,7 +104,7 @@ class CurrencyExchangeRow extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(width: 56),
+              const SizedBox(width: DimensionsConstants.containerHeight),
               Expanded(
                 child: Stack(
                   clipBehavior: Clip.none,
@@ -111,17 +115,19 @@ class CurrencyExchangeRow extends StatelessWidget {
                       right: 20,
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
+                          horizontal: DimensionsConstants.paddingSmall,
                           vertical: 2,
                         ),
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(4),
+                          borderRadius: BorderRadius.circular(
+                            DimensionsConstants.radiusSmall,
+                          ),
                         ),
                         child: Text(
                           StringConstants.exchangeWant,
                           style: TextStyle(
-                            fontSize: 12,
+                            fontSize: DimensionsConstants.fontSmall,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -147,8 +153,8 @@ class CurrencyExchangeRow extends StatelessWidget {
         ),
         Positioned(
           child: Container(
-            height: 56,
-            width: 56,
+            height: DimensionsConstants.containerHeight,
+            width: DimensionsConstants.containerHeight,
             decoration: BoxDecoration(
               color: ColorConstants.primary,
               shape: BoxShape.circle,

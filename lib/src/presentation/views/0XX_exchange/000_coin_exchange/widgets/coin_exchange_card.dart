@@ -1,4 +1,4 @@
-import 'package:el_dorado/src/core/app_constants/string_constants.dart';
+import 'package:el_dorado/src/core/app_constants/app_constants.dart';
 import 'package:el_dorado/src/data/models/coin_model.dart';
 import 'package:el_dorado/src/data/models/coin_type_enum.dart';
 import 'package:el_dorado/src/presentation/views/0XX_exchange/000_coin_exchange/bloc/coin_exchange_bloc.dart';
@@ -53,11 +53,13 @@ class CoinExchangeCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
             ),
             child: Container(
-              padding: const EdgeInsets.all(16),
-              width: 350,
+              padding: const EdgeInsets.all(DimensionsConstants.paddingMedium),
+              width: DimensionsConstants.containerWidth,
               decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: BorderRadius.circular(
+                  DimensionsConstants.radiusLarge,
+                ),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -81,7 +83,7 @@ class CoinExchangeCard extends StatelessWidget {
                       context.read<CoinExchangeBloc>().add(SwapCurrencies());
                     },
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: DimensionsConstants.paddingMedium),
                   CoinExchangeInput(
                     currency: fromCurrencyIdName,
                     value: state.amount.toString(),
@@ -110,7 +112,7 @@ class CoinExchangeCard extends StatelessWidget {
                     value:
                         '${StringConstants.approxSymbol}${state.estimatedTime} ',
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: DimensionsConstants.paddingMedium),
                   CoinExchangeButton(
                     isLoading: state.isLoadingExchange,
                     text: StringConstants.exchangeButtonText,

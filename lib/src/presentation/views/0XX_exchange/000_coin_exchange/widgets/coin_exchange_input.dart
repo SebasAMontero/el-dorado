@@ -41,19 +41,19 @@ class _CoinExchangeInputState extends State<CoinExchangeInput> {
         FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
       ],
       style: const TextStyle(
-        fontSize: 16,
+        fontSize: DimensionsConstants.fontMedium,
         fontWeight: FontWeight.w500,
         color: Colors.black,
       ),
 
       decoration: InputDecoration(
         prefixIcon: Padding(
-          padding: const EdgeInsets.only(left: 12),
+          padding: const EdgeInsets.only(left: DimensionsConstants.fontSmall),
           child: Text(
             widget.currency,
             style: TextStyle(
               color: ColorConstants.primary,
-              fontSize: 16,
+              fontSize: DimensionsConstants.fontMedium,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -61,17 +61,17 @@ class _CoinExchangeInputState extends State<CoinExchangeInput> {
         prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
         contentPadding: const EdgeInsets.symmetric(
           vertical: 14,
-          horizontal: 12,
+          horizontal: DimensionsConstants.fontSmall,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(DimensionsConstants.radiusLarge),
           borderSide: const BorderSide(
             color: ColorConstants.primary,
             width: 1.5,
           ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(DimensionsConstants.radiusLarge),
           borderSide: const BorderSide(color: ColorConstants.primary, width: 2),
         ),
         isDense: true,

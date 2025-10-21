@@ -21,16 +21,20 @@ class CoinExchangeButton extends StatelessWidget {
         style: ElevatedButton.styleFrom(
           backgroundColor: ColorConstants.primary,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(
+              DimensionsConstants.radiusMedium,
+            ),
           ),
           elevation: 2,
-          padding: const EdgeInsets.symmetric(vertical: 12),
+          padding: const EdgeInsets.symmetric(
+            vertical: DimensionsConstants.fontSmall,
+          ),
         ),
         onPressed: isLoading ? null : onPressed,
         child: isLoading
             ? const SizedBox(
-                height: 24,
-                width: 24,
+                height: DimensionsConstants.iconSmall,
+                width: DimensionsConstants.iconSmall,
                 child: CircularProgressIndicator(
                   color: Colors.white,
                   strokeWidth: 2,

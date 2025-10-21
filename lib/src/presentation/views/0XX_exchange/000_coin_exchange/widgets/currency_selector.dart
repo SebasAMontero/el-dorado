@@ -1,3 +1,4 @@
+import 'package:el_dorado/src/core/app_constants/app_constants.dart';
 import 'package:el_dorado/src/data/models/coin_model.dart';
 import 'package:el_dorado/src/data/models/coin_type_enum.dart';
 import 'package:flutter/material.dart';
@@ -22,23 +23,29 @@ class CurrencySelector extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CircleAvatar(
-            radius: 12,
+            radius: DimensionsConstants.fontSmall,
             backgroundColor: Colors.grey.shade200,
             child: selectedCurrency != null
                 ? Image.asset(selectedCurrency!.getImage(), fit: BoxFit.fill)
                 : null,
           ),
 
-          const SizedBox(width: 8),
+          const SizedBox(width: DimensionsConstants.paddingSmall),
 
           Text(
             coinType == CoinType.crypto
                 ? selectedCurrency?.getShortCryptoName() ?? ''
                 : selectedCurrency?.fiatCurrencyId ?? '',
-            style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
+            style: const TextStyle(
+              fontWeight: FontWeight.w500,
+              fontSize: DimensionsConstants.fontMedium,
+            ),
           ),
 
-          const Icon(Icons.keyboard_arrow_down, size: 24),
+          const Icon(
+            Icons.keyboard_arrow_down,
+            size: DimensionsConstants.iconSmall,
+          ),
         ],
       ),
     );
