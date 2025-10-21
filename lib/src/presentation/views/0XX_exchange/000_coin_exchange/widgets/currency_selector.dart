@@ -33,7 +33,7 @@ class CurrencySelector extends StatelessWidget {
 
           Text(
             coinType == CoinType.crypto
-                ? selectedCurrency?.cryptoCurrencyId ?? ''
+                ? selectedCurrency?.getShortCryptoName() ?? ''
                 : selectedCurrency?.fiatCurrencyId ?? '',
             style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 16),
           ),

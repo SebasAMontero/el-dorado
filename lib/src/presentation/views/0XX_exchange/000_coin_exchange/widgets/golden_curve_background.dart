@@ -11,7 +11,7 @@ class GoldenCurveBackground extends StatelessWidget {
       child: ClipPath(
         clipper: _GoldenCurveClipper(),
         child: Container(
-          color: ColorConstants.primary, // tu dorado
+          color: ColorConstants.primary,
           width: MediaQuery.of(context).size.width * 0.8,
           height: MediaQuery.of(context).size.height * 0.8,
         ),
@@ -25,10 +25,9 @@ class _GoldenCurveClipper extends CustomClipper<Path> {
   Path getClip(Size size) {
     final path = Path();
 
-    // Comienza desde la esquina inferior izquierda
     path.lineTo(0, size.height);
     path.lineTo(size.width, size.height);
-    // curva superior derecha
+
     path.quadraticBezierTo(size.width * 0.7, size.height * 0.4, size.width, 0);
     path.lineTo(0, 0);
     path.close();

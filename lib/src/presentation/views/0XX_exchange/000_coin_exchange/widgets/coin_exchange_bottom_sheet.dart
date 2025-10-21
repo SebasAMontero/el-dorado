@@ -47,7 +47,7 @@ class CoinExchangeBottomSheet extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final currency = currencies[index];
                   final currencyId = currency.coinType == CoinType.crypto
-                      ? currency.cryptoCurrencyId ?? ''
+                      ? currency.getShortCryptoName()
                       : currency.fiatCurrencyId ?? '';
 
                   return ListTile(

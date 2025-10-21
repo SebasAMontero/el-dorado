@@ -1,5 +1,7 @@
 import 'package:el_dorado/src/data/models/coin_model.dart';
 import 'package:el_dorado/src/data/models/coin_type_enum.dart';
+import 'package:el_dorado/src/data/models/exchange_model.dart';
+import 'package:el_dorado/src/data/models/exchange_request_model.dart';
 import 'package:el_dorado/src/domain/repositories/coin_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,8 +20,13 @@ class CoinExchangeBloc extends Bloc<CoinExchangeEvent, CoinExchangeState> {
     on<UpdateToCurrency>(_updateToCurrency);
     on<SwapCurrencies>(_swapCurrencies);
     on<UpdateAmount>(_updateAmount);
+    on<ResetError>(_resetError);
     on<PerformExchange>(_performExchange);
   }
+  void _resetError(ResetError event, Emitter<CoinExchangeState> emit) {
+    emit(state.copyWith(hasError: false, isLoading: false));
+  }
+
   Future<void> _loadCoins(
     LoadCoins event,
     Emitter<CoinExchangeState> emit,
@@ -35,6 +42,23 @@ class CoinExchangeBloc extends Bloc<CoinExchangeEvent, CoinExchangeState> {
       final fiatCoins = coins
           .where((c) => c.coinType == CoinType.fiat)
           .toList();
+      final fromCurrency = cryptoCoins.isNotEmpty ? cryptoCoins.first : null;
+      final toCurrency = fiatCoins.isNotEmpty ? fiatCoins.first : null;
+
+      //? Initial data
+      final exchangeRequest = ExchangeRequest(
+        type: 0,
+        cryptoCurrencyId: 'TATUM-TRON-USDT',
+        fiatCurrencyId: 'VES',
+        amount: 0,
+        amountCurrencyId: 'VES',
+      );
+      final currencyExchange = await _coinRepository.getCoinExchange(
+        exchangeRequest: exchangeRequest,
+      );
+      final rate =
+          double.tryParse(currencyExchange.fiatToCryptoExchangeRate) ?? 0.0;
+      final exchangeTotalToReceive = 200 * rate;
 
       emit(
         state.copyWith(
@@ -42,8 +66,11 @@ class CoinExchangeBloc extends Bloc<CoinExchangeEvent, CoinExchangeState> {
           coins: coins,
           cryptoCoins: cryptoCoins,
           fiatCoins: fiatCoins,
-          fromCurrency: cryptoCoins.isNotEmpty ? cryptoCoins.first : null,
-          toCurrency: fiatCoins.isNotEmpty ? fiatCoins.first : null,
+          fromCurrency: fromCurrency,
+          toCurrency: toCurrency,
+          exchangeTotalToReceive: exchangeTotalToReceive,
+          currencyExchange: currencyExchange,
+          hasError: false,
         ),
       );
     } catch (e) {
@@ -69,18 +96,25 @@ class CoinExchangeBloc extends Bloc<CoinExchangeEvent, CoinExchangeState> {
 
   /// Intercambia las monedas
   void _swapCurrencies(SwapCurrencies event, Emitter<CoinExchangeState> emit) {
+    final swappedFrom = state.toCurrency;
+    final swappedTo = state.fromCurrency;
+
+    final swappedCryptoCoins = state.fiatCoins;
+    final swappedFiatCoins = state.cryptoCoins;
+
     emit(
       state.copyWith(
-        fromCurrency: state.toCurrency,
-        toCurrency: state.fromCurrency,
-        amount: state.amount,
+        fromCurrency: swappedFrom,
+        toCurrency: swappedTo,
+        cryptoCoins: swappedCryptoCoins,
+        fiatCoins: swappedFiatCoins,
       ),
     );
   }
 
   /// Actualiza la cantidad a intercambiar
   void _updateAmount(UpdateAmount event, Emitter<CoinExchangeState> emit) {
-    emit(state.copyWith(amount: event.amount));
+    emit(state.copyWith(amount: event.amount, hasError: false));
   }
 
   /// Ejecuta el intercambio
@@ -94,20 +128,31 @@ class CoinExchangeBloc extends Bloc<CoinExchangeEvent, CoinExchangeState> {
       return;
     }
 
-    emit(state.copyWith(isLoadingExchange: true));
+    emit(state.copyWith(isLoadingExchange: true, hasError: false));
 
     try {
-      //!
-      // final result = await _coinRepository.performCoinExchange(
-      //   fromCurrency: state.fromCurrency!,
-      //   toCurrency: state.toCurrency!,
-      //   amount: state.amount,
-      // );
-
+      final fromCurrency = state.fromCurrency!;
+      final toCurrency = state.toCurrency!;
+      final amount = state.amount;
+      final exchangeRequest = ExchangeRequest(
+        type: fromCurrency.coinType == CoinType.crypto ? 0 : 1,
+        cryptoCurrencyId: fromCurrency.cryptoCurrencyId ?? '',
+        fiatCurrencyId: toCurrency.fiatCurrencyId ?? '',
+        amount: amount,
+        amountCurrencyId: toCurrency.fiatCurrencyId ?? '',
+      );
+      final currencyExchange = await _coinRepository.getCoinExchange(
+        exchangeRequest: exchangeRequest,
+      );
+      final rate =
+          double.tryParse(currencyExchange.fiatToCryptoExchangeRate) ?? 0.0;
+      final exchangeTotalToReceive = 200 * rate;
       emit(
         state.copyWith(
           isLoadingExchange: false,
-          //  lastExchangeResult: result,
+          exchangeTotalToReceive: exchangeTotalToReceive,
+          currencyExchange: currencyExchange,
+          hasError: false,
         ),
       );
     } catch (e) {

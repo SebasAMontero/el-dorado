@@ -60,12 +60,23 @@ class CoinModel {
     );
   }
 
+  String getShortCryptoName() {
+    switch (cryptoCurrencyId) {
+      case 'TATUM-TRON-USDT':
+        return 'USDT';
+      case 'TATUM-TRON-USDC':
+        return 'USDC';
+      default:
+        return cryptoCurrencyId ?? '';
+    }
+  }
+
   String getName() {
     if (coinType == CoinType.crypto) {
       switch (cryptoCurrencyId) {
-        case 'USDT':
+        case 'TATUM-TRON-USDT':
           return 'Tether (USDT)';
-        case 'USDC':
+        case 'TATUM-TRON-USDC':
           return 'USD Coin (USDC)';
         default:
           return cryptoCurrencyId ?? '';
@@ -95,9 +106,9 @@ class CoinModel {
   String getImage() {
     if (coinType == CoinType.crypto) {
       switch (cryptoCurrencyId) {
-        case 'USDT':
+        case 'TATUM-TRON-USDT':
           return ImageConstants.usdt;
-        case 'USDC':
+        case 'TATUM-TRON-USDC':
           return ImageConstants.usdc;
         default:
           return ImageConstants.elDorado;

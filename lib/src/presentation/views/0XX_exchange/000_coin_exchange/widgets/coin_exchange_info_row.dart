@@ -26,7 +26,14 @@ class ExchangeInfoRow extends StatelessWidget {
           ),
           Row(
             children: [
-              Text(value, style: const TextStyle(fontWeight: FontWeight.w500)),
+              Text(
+                value,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16,
+                ),
+              ),
+
               Text(suffixText),
             ],
           ),

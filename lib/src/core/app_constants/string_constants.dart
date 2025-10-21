@@ -7,7 +7,8 @@ class StringConstants {
   static const String coinsListTitle = 'Listado de Coins';
   static const String searchHint = 'Buscar coins...';
   static const String emptyCoins = 'No hay monedas disponibles.';
-  static const String errorCoins = 'Ha ocurrido un error.';
+  static const String errorCoins =
+      'Ha ocurrido un error. Por favor intente más tarde.';
 
   // Exchange - Labels
   static const String exchangeHave = 'TENGO';
