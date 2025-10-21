@@ -1,3 +1,4 @@
+import 'package:el_dorado/src/core/app_constants/image_constants.dart';
 import 'package:el_dorado/src/data/models/coin_type_enum.dart';
 
 class CoinModel {
@@ -95,33 +96,33 @@ class CoinModel {
     if (coinType == CoinType.crypto) {
       switch (cryptoCurrencyId) {
         case 'USDT':
-          return 'assets/images/cripto_currencies/usdt.png';
-        // case 'USDC':
-        //   return 'assets/images/cripto_currencies/tatum_tron_.png';
+          return ImageConstants.usdt;
+        case 'USDC':
+          return ImageConstants.usdc;
         default:
-          return 'assets/images/el_dorado.png';
+          return ImageConstants.elDorado;
       }
     }
 
     if (coinType == CoinType.fiat) {
       switch (fiatCurrencyId) {
         case 'VES':
-          return 'assets/images/fiat_currencies/ves.png';
+          return ImageConstants.ves;
         case 'COP':
-          return 'assets/images/fiat_currencies/cop.png';
-        // case 'ARS':
-        //   return 'assets/images/fiat_currencies/ar.png';
+          return ImageConstants.cop;
+        case 'ARS':
+          return ImageConstants.arg;
         case 'PEN':
-          return 'assets/images/fiat_currencies/pen.png';
+          return ImageConstants.pen;
         case 'BRL':
-          return 'assets/images/fiat_currencies/brl.png';
-        // case 'BOB':
-        //   return 'assets/images/fiat_currencies/bo.png';
+          return ImageConstants.brl;
+        case 'BOB':
+          return ImageConstants.bob;
         default:
-          return 'assets/images/el_dorado.png';
+          return ImageConstants.elDorado;
       }
     }
 
-    return 'assets/images/el_dorado.png';
+    return ImageConstants.elDorado;
   }
 }
