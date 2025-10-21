@@ -2,7 +2,7 @@ import 'package:el_dorado/src/core/app_constants/app_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class CoinExchangeInput extends StatelessWidget {
+class CoinExchangeInput extends StatefulWidget {
   final String value;
   final String currency;
   final ValueChanged<String> onChanged;
@@ -15,11 +15,27 @@ class CoinExchangeInput extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final controller = TextEditingController(text: value);
+  State<CoinExchangeInput> createState() => _CoinExchangeInputState();
+}
 
+class _CoinExchangeInputState extends State<CoinExchangeInput> {
+  late final TextEditingController _controller;
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.value);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return TextField(
-      controller: controller,
+      controller: _controller,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
       inputFormatters: [
         FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}$')),
@@ -34,7 +50,7 @@ class CoinExchangeInput extends StatelessWidget {
         prefixIcon: Padding(
           padding: const EdgeInsets.only(left: 12),
           child: Text(
-            currency,
+            widget.currency,
             style: TextStyle(
               color: ColorConstants.primary,
               fontSize: 16,
@@ -60,7 +76,7 @@ class CoinExchangeInput extends StatelessWidget {
         ),
         isDense: true,
       ),
-      onChanged: onChanged,
+      onChanged: widget.onChanged,
     );
   }
 }

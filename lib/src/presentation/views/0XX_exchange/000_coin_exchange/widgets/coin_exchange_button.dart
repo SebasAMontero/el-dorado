@@ -29,8 +29,8 @@ class CoinExchangeButton extends StatelessWidget {
         onPressed: isLoading ? null : onPressed,
         child: isLoading
             ? const SizedBox(
-                height: 20,
-                width: 20,
+                height: 24,
+                width: 24,
                 child: CircularProgressIndicator(
                   color: Colors.white,
                   strokeWidth: 2,

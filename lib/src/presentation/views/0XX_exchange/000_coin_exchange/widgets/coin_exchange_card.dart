@@ -40,8 +40,12 @@ class CoinExchangeCard extends StatelessWidget {
         final fromCurrencyIdName = fromCurrency?.coinType == CoinType.crypto
             ? state.fromCurrency?.getShortCryptoName() ?? ''
             : fromCurrency?.fiatCurrencyId ?? '';
+        final isCryptoToFiat = state.fromCurrency?.coinType == CoinType.crypto;
 
-        final cryptoCurrencyId = state.toCurrency?.fiatCurrencyId ?? '';
+        final cryptoCurrencyId = isCryptoToFiat
+            ? state.toCurrency?.fiatCurrencyId ?? ''
+            : state.toCurrency?.getShortCryptoName() ?? '';
+
         return Center(
           child: Card(
             elevation: 6,
@@ -98,7 +102,7 @@ class CoinExchangeCard extends StatelessWidget {
                   ExchangeInfoRow(
                     label: StringConstants.exchangeReceive,
                     value:
-                        '${StringConstants.approxSymbol}${state.exchangeTotalToReceive}',
+                        '${StringConstants.approxSymbol}${state.exchangeTotalToReceive.toStringAsFixed(2)}',
                     suffixText: ' $cryptoCurrencyId',
                   ),
                   ExchangeInfoRow(
@@ -108,7 +112,7 @@ class CoinExchangeCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   CoinExchangeButton(
-                    isLoading: state.isLoading,
+                    isLoading: state.isLoadingExchange,
                     text: StringConstants.exchangeButtonText,
                     onPressed: () {
                       context.read<CoinExchangeBloc>().add(PerformExchange());

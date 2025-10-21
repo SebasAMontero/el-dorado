@@ -58,7 +58,7 @@ class CoinExchangeBloc extends Bloc<CoinExchangeEvent, CoinExchangeState> {
       );
       final rate =
           double.tryParse(currencyExchange.fiatToCryptoExchangeRate) ?? 0.0;
-      final exchangeTotalToReceive = 200 * rate;
+      final exchangeTotalToReceive = 0 * rate;
 
       emit(
         state.copyWith(
@@ -146,7 +146,7 @@ class CoinExchangeBloc extends Bloc<CoinExchangeEvent, CoinExchangeState> {
       );
       final rate =
           double.tryParse(currencyExchange.fiatToCryptoExchangeRate) ?? 0.0;
-      final exchangeTotalToReceive = 200 * rate;
+      final exchangeTotalToReceive = amount * rate;
       emit(
         state.copyWith(
           isLoadingExchange: false,
