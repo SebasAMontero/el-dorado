@@ -22,9 +22,20 @@ class CoinExchangeBloc extends Bloc<CoinExchangeEvent, CoinExchangeState> {
     on<UpdateAmount>(_updateAmount);
     on<ResetError>(_resetError);
     on<PerformExchange>(_performExchange);
+    on<ResetExchange>(_resetExchange);
   }
   void _resetError(ResetError event, Emitter<CoinExchangeState> emit) {
     emit(state.copyWith(hasError: false, isLoading: false));
+  }
+
+  void _resetExchange(ResetExchange event, Emitter<CoinExchangeState> emit) {
+    emit(
+      state.copyWith(
+        exchangeTotalToReceive: 0,
+        currencyExchange: CurrencyExchange(fiatToCryptoExchangeRate: '0'),
+        hasError: false,
+      ),
+    );
   }
 
   Future<void> _loadCoins(
@@ -108,6 +119,8 @@ class CoinExchangeBloc extends Bloc<CoinExchangeEvent, CoinExchangeState> {
         toCurrency: swappedTo,
         cryptoCoins: swappedCryptoCoins,
         fiatCoins: swappedFiatCoins,
+        exchangeTotalToReceive: 0,
+        currencyExchange: CurrencyExchange(fiatToCryptoExchangeRate: '0'),
       ),
     );
   }

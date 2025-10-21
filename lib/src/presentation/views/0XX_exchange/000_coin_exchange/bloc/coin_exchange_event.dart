@@ -46,5 +46,8 @@ class UpdateAmount extends CoinExchangeEvent {
 /// Ejecuta el intercambio
 class PerformExchange extends CoinExchangeEvent {}
 
+/// Reinicia los valores del exchange a 0.
+class ResetExchange extends CoinExchangeEvent {}
+
 /// Resetea el error para mostrar solo 1 vez el Snackbar
 class ResetError extends CoinExchangeEvent {}

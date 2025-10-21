@@ -1,7 +1,9 @@
 import 'package:el_dorado/src/core/app_constants/app_constants.dart';
 import 'package:el_dorado/src/data/models/coin_model.dart';
 import 'package:el_dorado/src/data/models/coin_type_enum.dart';
+import 'package:el_dorado/src/presentation/views/0XX_exchange/000_coin_exchange/bloc/coin_exchange_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class CoinExchangeBottomSheet extends StatelessWidget {
   final List<CoinModel> currencies;
@@ -41,49 +43,56 @@ class CoinExchangeBottomSheet extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Flexible(
-              child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: currencies.length,
-                itemBuilder: (context, index) {
-                  final currency = currencies[index];
-                  final currencyId = currency.coinType == CoinType.crypto
-                      ? currency.getShortCryptoName()
-                      : currency.fiatCurrencyId ?? '';
-
-                  return ListTile(
-                    leading: CircleAvatar(
-                      radius: 16,
-                      child: Image.asset(currency.getImage()),
-                    ),
-                    title: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          currencyId,
-                          style: const TextStyle(fontWeight: FontWeight.w500),
-                        ),
-                        Text(
-                          currency.getName(),
-                          style: TextStyle(
-                            color: ColorConstants.textSecondary,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                    onTap: () {
-                      Navigator.pop(context, currency);
-                    },
-                    trailing: Radio<CoinModel>(
-                      value: currency,
-                      groupValue: selectedCurrency,
-                      activeColor: Colors.black,
-                      onChanged: (val) {
-                        if (val != null) Navigator.pop(context, val);
-                      },
-                    ),
-                  );
+              child: RadioGroup<CoinModel>(
+                groupValue: selectedCurrency,
+                onChanged: (val) {
+                  if (val != null) {
+                    context.read<CoinExchangeBloc>().add(ResetExchange());
+                    Navigator.pop(context, val);
+                  }
                 },
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: currencies.length,
+                  itemBuilder: (context, index) {
+                    final currency = currencies[index];
+                    final currencyId = currency.coinType == CoinType.crypto
+                        ? currency.getShortCryptoName()
+                        : currency.fiatCurrencyId ?? '';
+
+                    return ListTile(
+                      leading: CircleAvatar(
+                        radius: 16,
+                        child: Image.asset(currency.getImage()),
+                      ),
+                      title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            currencyId,
+                            style: const TextStyle(fontWeight: FontWeight.w500),
+                          ),
+                          Text(
+                            currency.getName(),
+                            style: TextStyle(
+                              color: ColorConstants.textSecondary,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                      onTap: () {
+                        context.read<CoinExchangeBloc>().add(ResetExchange());
+                        Navigator.pop(context, currency);
+                      },
+
+                      trailing: Radio<CoinModel>(
+                        value: currency,
+                        activeColor: Colors.black,
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
           ],

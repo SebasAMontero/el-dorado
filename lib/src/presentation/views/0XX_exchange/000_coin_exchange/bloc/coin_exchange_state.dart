@@ -76,7 +76,6 @@ class CoinExchangeState extends Equatable {
     cryptoCoins,
     isLoading,
     hasError,
-
     fromCurrency,
     toCurrency,
     amount,
