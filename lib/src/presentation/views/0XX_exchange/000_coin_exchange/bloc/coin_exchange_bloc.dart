@@ -67,9 +67,8 @@ class CoinExchangeBloc extends Bloc<CoinExchangeEvent, CoinExchangeState> {
       final currencyExchange = await _coinRepository.getCoinExchange(
         exchangeRequest: exchangeRequest,
       );
-      final rate =
-          double.tryParse(currencyExchange.fiatToCryptoExchangeRate) ?? 0.0;
-      final exchangeTotalToReceive = 0 * rate;
+      // Para la inicialización, siempre será 0 ya que amount es 0
+      final exchangeTotalToReceive = 0.0;
 
       emit(
         state.copyWith(
@@ -166,7 +165,11 @@ class CoinExchangeBloc extends Bloc<CoinExchangeEvent, CoinExchangeState> {
       );
       final rate =
           double.tryParse(currencyExchange.fiatToCryptoExchangeRate) ?? 0.0;
-      final exchangeTotalToReceive = amount * rate;
+
+      /// Calcular el total a recibir según el tipo de intercambio
+      final exchangeTotalToReceive = fromCurrency.coinType == CoinType.crypto
+          ? amount * rate
+          : amount / rate;
       emit(
         state.copyWith(
           isLoadingExchange: false,
