@@ -110,6 +110,7 @@ class CoinExchangeBloc extends Bloc<CoinExchangeEvent, CoinExchangeState> {
     final swappedFrom = state.toCurrency;
     final swappedTo = state.fromCurrency;
 
+    // Intercambiar las listas de monedas según el tipo
     final swappedCryptoCoins = state.fiatCoins;
     final swappedFiatCoins = state.cryptoCoins;
 
@@ -149,10 +150,16 @@ class CoinExchangeBloc extends Bloc<CoinExchangeEvent, CoinExchangeState> {
       final amount = state.amount;
       final exchangeRequest = ExchangeRequest(
         type: fromCurrency.coinType == CoinType.crypto ? 0 : 1,
-        cryptoCurrencyId: fromCurrency.cryptoCurrencyId ?? '',
-        fiatCurrencyId: toCurrency.fiatCurrencyId ?? '',
+        cryptoCurrencyId: fromCurrency.coinType == CoinType.crypto
+            ? fromCurrency.cryptoCurrencyId ?? ''
+            : toCurrency.cryptoCurrencyId ?? '',
+        fiatCurrencyId: toCurrency.coinType == CoinType.fiat
+            ? toCurrency.fiatCurrencyId ?? ''
+            : fromCurrency.fiatCurrencyId ?? '',
         amount: amount,
-        amountCurrencyId: toCurrency.fiatCurrencyId ?? '',
+        amountCurrencyId: toCurrency.coinType == CoinType.fiat
+            ? toCurrency.fiatCurrencyId ?? ''
+            : fromCurrency.fiatCurrencyId ?? '',
       );
       final currencyExchange = await _coinRepository.getCoinExchange(
         exchangeRequest: exchangeRequest,

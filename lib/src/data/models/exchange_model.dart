@@ -1,4 +1,5 @@
 class CurrencyExchange {
+  //? add  cryptoToFiatExchangeRate
   final String fiatToCryptoExchangeRate;
 
   const CurrencyExchange({required this.fiatToCryptoExchangeRate});
