@@ -9,14 +9,20 @@ class CurrencySelector extends StatelessWidget {
 
   const CurrencySelector({
     super.key,
-
     required this.selectedCurrency,
     required this.onTap,
   });
 
+  /// Helper method para obtener el nombre de la moneda
+  String _getCurrencyName() {
+    final coinType = selectedCurrency?.coinType;
+    return coinType == CoinType.crypto
+        ? selectedCurrency?.getShortCryptoName() ?? ''
+        : selectedCurrency?.fiatCurrencyId ?? '';
+  }
+
   @override
   Widget build(BuildContext context) {
-    final coinType = selectedCurrency?.coinType;
     return GestureDetector(
       onTap: onTap,
       child: Row(
@@ -29,19 +35,14 @@ class CurrencySelector extends StatelessWidget {
                 ? Image.asset(selectedCurrency!.getImage(), fit: BoxFit.fill)
                 : null,
           ),
-
           const SizedBox(width: DimensionsConstants.paddingSmall),
-
           Text(
-            coinType == CoinType.crypto
-                ? selectedCurrency?.getShortCryptoName() ?? ''
-                : selectedCurrency?.fiatCurrencyId ?? '',
+            _getCurrencyName(),
             style: const TextStyle(
               fontWeight: FontWeight.w500,
               fontSize: DimensionsConstants.fontMedium,
             ),
           ),
-
           const Icon(
             Icons.keyboard_arrow_down,
             size: DimensionsConstants.iconSmall,

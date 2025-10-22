@@ -24,11 +24,43 @@ class CoinExchangeBloc extends Bloc<CoinExchangeEvent, CoinExchangeState> {
     on<PerformExchange>(_performExchange);
     on<ResetExchange>(_resetExchange);
   }
-  void _resetError(ResetError event, Emitter<CoinExchangeState> emit) {
-    emit(state.copyWith(hasError: false, isLoading: false));
+
+  /// Helper method para crear ExchangeRequest
+  ExchangeRequest _createExchangeRequest({
+    required CoinModel fromCurrency,
+    required CoinModel toCurrency,
+    required double amount,
+  }) {
+    return ExchangeRequest(
+      type: fromCurrency.coinType == CoinType.crypto ? 0 : 1,
+      cryptoCurrencyId: fromCurrency.coinType == CoinType.crypto
+          ? fromCurrency.cryptoCurrencyId ?? ''
+          : toCurrency.cryptoCurrencyId ?? '',
+      fiatCurrencyId: toCurrency.coinType == CoinType.fiat
+          ? toCurrency.fiatCurrencyId ?? ''
+          : fromCurrency.fiatCurrencyId ?? '',
+      amount: amount,
+      amountCurrencyId: toCurrency.coinType == CoinType.fiat
+          ? toCurrency.fiatCurrencyId ?? ''
+          : fromCurrency.fiatCurrencyId ?? '',
+    );
   }
 
-  void _resetExchange(ResetExchange event, Emitter<CoinExchangeState> emit) {
+  /// Helper method para calcular el total a recibir
+  double _calculateExchangeTotal({
+    required double amount,
+    required double rate,
+    required CoinModel fromCurrency,
+  }) {
+    if (rate == 0.0) return 0.0;
+
+    return fromCurrency.coinType == CoinType.crypto
+        ? amount * rate
+        : amount / rate;
+  }
+
+  /// Helper method para resetear el estado de intercambio
+  void _resetExchangeState(Emitter<CoinExchangeState> emit) {
     emit(
       state.copyWith(
         exchangeTotalToReceive: 0,
@@ -36,6 +68,14 @@ class CoinExchangeBloc extends Bloc<CoinExchangeEvent, CoinExchangeState> {
         hasError: false,
       ),
     );
+  }
+
+  void _resetError(ResetError event, Emitter<CoinExchangeState> emit) {
+    emit(state.copyWith(hasError: false, isLoading: false));
+  }
+
+  void _resetExchange(ResetExchange event, Emitter<CoinExchangeState> emit) {
+    _resetExchangeState(emit);
   }
 
   Future<void> _loadCoins(
@@ -67,7 +107,7 @@ class CoinExchangeBloc extends Bloc<CoinExchangeEvent, CoinExchangeState> {
       final currencyExchange = await _coinRepository.getCoinExchange(
         exchangeRequest: exchangeRequest,
       );
-      // Para la inicialización, siempre será 0 ya que amount es 0
+
       final exchangeTotalToReceive = 0.0;
 
       emit(
@@ -106,19 +146,12 @@ class CoinExchangeBloc extends Bloc<CoinExchangeEvent, CoinExchangeState> {
 
   /// Intercambia las monedas
   void _swapCurrencies(SwapCurrencies event, Emitter<CoinExchangeState> emit) {
-    final swappedFrom = state.toCurrency;
-    final swappedTo = state.fromCurrency;
-
-    // Intercambiar las listas de monedas según el tipo
-    final swappedCryptoCoins = state.fiatCoins;
-    final swappedFiatCoins = state.cryptoCoins;
-
     emit(
       state.copyWith(
-        fromCurrency: swappedFrom,
-        toCurrency: swappedTo,
-        cryptoCoins: swappedCryptoCoins,
-        fiatCoins: swappedFiatCoins,
+        fromCurrency: state.toCurrency,
+        toCurrency: state.fromCurrency,
+        cryptoCoins: state.fiatCoins,
+        fiatCoins: state.cryptoCoins,
         exchangeTotalToReceive: 0,
         currencyExchange: CurrencyExchange(fiatToCryptoExchangeRate: '0'),
       ),
@@ -147,35 +180,25 @@ class CoinExchangeBloc extends Bloc<CoinExchangeEvent, CoinExchangeState> {
       final fromCurrency = state.fromCurrency!;
       final toCurrency = state.toCurrency!;
       final amount = state.amount;
-      final exchangeRequest = ExchangeRequest(
-        type: fromCurrency.coinType == CoinType.crypto ? 0 : 1,
-        cryptoCurrencyId: fromCurrency.coinType == CoinType.crypto
-            ? fromCurrency.cryptoCurrencyId ?? ''
-            : toCurrency.cryptoCurrencyId ?? '',
-        fiatCurrencyId: toCurrency.coinType == CoinType.fiat
-            ? toCurrency.fiatCurrencyId ?? ''
-            : fromCurrency.fiatCurrencyId ?? '',
+
+      final exchangeRequest = _createExchangeRequest(
+        fromCurrency: fromCurrency,
+        toCurrency: toCurrency,
         amount: amount,
-        amountCurrencyId: toCurrency.coinType == CoinType.fiat
-            ? toCurrency.fiatCurrencyId ?? ''
-            : fromCurrency.fiatCurrencyId ?? '',
       );
+
       final currencyExchange = await _coinRepository.getCoinExchange(
         exchangeRequest: exchangeRequest,
       );
+
       final rate =
           double.tryParse(currencyExchange.fiatToCryptoExchangeRate) ?? 0.0;
+      final exchangeTotalToReceive = _calculateExchangeTotal(
+        amount: amount,
+        rate: rate,
+        fromCurrency: fromCurrency,
+      );
 
-      double exchangeTotalToReceive;
-
-      /// Calcular el total a recibir según el tipo de intercambio
-      if (rate == 0.0) {
-        exchangeTotalToReceive = 0.0;
-      } else {
-        exchangeTotalToReceive = fromCurrency.coinType == CoinType.crypto
-            ? amount * rate
-            : amount / rate;
-      }
       emit(
         state.copyWith(
           isLoadingExchange: false,

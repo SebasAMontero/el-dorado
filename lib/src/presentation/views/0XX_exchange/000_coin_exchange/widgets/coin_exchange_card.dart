@@ -12,6 +12,51 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class CoinExchangeCard extends StatelessWidget {
   const CoinExchangeCard({super.key});
 
+  /// Helper method para obtener el nombre de la moneda de origen
+  String _getFromCurrencyName(CoinExchangeState state) {
+    final fromCurrency = state.cryptoCoins.isNotEmpty
+        ? state.fromCurrency ?? state.cryptoCoins.first
+        : null;
+
+    return fromCurrency?.coinType == CoinType.crypto
+        ? state.fromCurrency?.getShortCryptoName() ?? ''
+        : fromCurrency?.fiatCurrencyId ?? '';
+  }
+
+  /// Helper method para obtener el nombre de la moneda de destino
+  String _getToCurrencyName(CoinExchangeState state) {
+    final isCryptoToFiat = state.fromCurrency?.coinType == CoinType.crypto;
+    return isCryptoToFiat
+        ? state.toCurrency?.fiatCurrencyId ?? ''
+        : state.toCurrency?.getShortCryptoName() ?? '';
+  }
+
+  /// Helper method para manejar la selección de moneda de origen
+  void _handleFromCurrencySelection(BuildContext context, CoinModel coin) {
+    context.read<CoinExchangeBloc>().add(UpdateFromCurrency(coin));
+  }
+
+  /// Helper method para manejar la selección de moneda de destino
+  void _handleToCurrencySelection(BuildContext context, CoinModel coin) {
+    context.read<CoinExchangeBloc>().add(UpdateToCurrency(coin));
+  }
+
+  /// Helper method para manejar el intercambio de monedas
+  void _handleSwapCurrencies(BuildContext context) {
+    context.read<CoinExchangeBloc>().add(SwapCurrencies());
+  }
+
+  /// Helper method para manejar el cambio de cantidad
+  void _handleAmountChange(BuildContext context, String value) {
+    final amount = double.tryParse(value) ?? 0.0;
+    context.read<CoinExchangeBloc>().add(UpdateAmount(amount));
+  }
+
+  /// Helper method para ejecutar el intercambio
+  void _handlePerformExchange(BuildContext context) {
+    context.read<CoinExchangeBloc>().add(PerformExchange());
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<CoinExchangeBloc, CoinExchangeState>(
@@ -37,14 +82,8 @@ class CoinExchangeCard extends StatelessWidget {
         final toCurrency = state.fiatCoins.isNotEmpty
             ? state.toCurrency ?? state.fiatCoins.first
             : null;
-        final fromCurrencyIdName = fromCurrency?.coinType == CoinType.crypto
-            ? state.fromCurrency?.getShortCryptoName() ?? ''
-            : fromCurrency?.fiatCurrencyId ?? '';
-        final isCryptoToFiat = state.fromCurrency?.coinType == CoinType.crypto;
-
-        final cryptoCurrencyId = isCryptoToFiat
-            ? state.toCurrency?.fiatCurrencyId ?? ''
-            : state.toCurrency?.getShortCryptoName() ?? '';
+        final fromCurrencyIdName = _getFromCurrencyName(state);
+        final toCurrencyIdName = _getToCurrencyName(state);
 
         return Center(
           child: Card(
@@ -69,43 +108,30 @@ class CoinExchangeCard extends StatelessWidget {
                     toCurrency: toCurrency,
                     cryptoCoins: state.cryptoCoins,
                     fiatCoins: state.fiatCoins,
-                    onFromSelected: (CoinModel coin) {
-                      context.read<CoinExchangeBloc>().add(
-                        UpdateFromCurrency(coin),
-                      );
-                    },
-                    onToSelected: (CoinModel coin) {
-                      context.read<CoinExchangeBloc>().add(
-                        UpdateToCurrency(coin),
-                      );
-                    },
-                    onSwap: () {
-                      context.read<CoinExchangeBloc>().add(SwapCurrencies());
-                    },
+                    onFromSelected: (coin) =>
+                        _handleFromCurrencySelection(context, coin),
+                    onToSelected: (coin) =>
+                        _handleToCurrencySelection(context, coin),
+                    onSwap: () => _handleSwapCurrencies(context),
                   ),
                   const SizedBox(height: DimensionsConstants.paddingMedium),
                   CoinExchangeInput(
                     currency: fromCurrencyIdName,
                     value: state.amount.toString(),
-                    onChanged: (val) {
-                      final amount = double.tryParse(val) ?? 0.0;
-                      context.read<CoinExchangeBloc>().add(
-                        UpdateAmount(amount),
-                      );
-                    },
+                    onChanged: (val) => _handleAmountChange(context, val),
                   ),
                   const SizedBox(height: 16),
                   ExchangeInfoRow(
                     label: StringConstants.exchangeRate,
                     value:
                         '${StringConstants.approxSymbol}${state.currencyExchange?.fiatToCryptoExchangeRate ?? ''}',
-                    suffixText: ' $cryptoCurrencyId',
+                    suffixText: ' $toCurrencyIdName',
                   ),
                   ExchangeInfoRow(
                     label: StringConstants.exchangeReceive,
                     value:
                         '${StringConstants.approxSymbol}${state.exchangeTotalToReceive.toStringAsFixed(2)}',
-                    suffixText: ' $cryptoCurrencyId',
+                    suffixText: ' $toCurrencyIdName',
                   ),
                   ExchangeInfoRow(
                     label: StringConstants.exchangeEstimatedTime,
@@ -116,9 +142,7 @@ class CoinExchangeCard extends StatelessWidget {
                   CoinExchangeButton(
                     isLoading: state.isLoadingExchange,
                     text: StringConstants.exchangeButtonText,
-                    onPressed: () {
-                      context.read<CoinExchangeBloc>().add(PerformExchange());
-                    },
+                    onPressed: () => _handlePerformExchange(context),
                   ),
                 ],
               ),
